@@ -44,9 +44,41 @@ int main(int argc, char **argv) {
 	}
 	cmd[++i] = '\0';
 
-	//テスト用, 読み込んだコマンド列をそのまま出力.
-	printf("%s", cmd);
-	printf("%d", cmd[i-1]);
+	int j = 0;
+	while(cmd[j] != '\0')
+	{
+		switch(cmd[j]){
+		case '>':
+			printf(">");
+			break;
+		case '<':
+			printf("<");
+			break;
+		case '+':
+			printf("+");
+			break;
+		case '-':
+			printf("-");
+			break;
+		case '.':
+			printf(".");
+			break;
+		case ',':
+			printf(",");
+			break;
+		case '[':
+			printf("[");
+			break;
+		case ']':
+			printf("]");
+			break;
+		default :
+			break;
+		}
+		j++;
+	}
+
+
 
 	free(cmd);
 	return 0;
