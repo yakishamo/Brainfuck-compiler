@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
 
 	FILE *fp;
 	if((fp = fopen(argv[1], "r")) == NULL){
-		fprintf(stderr, "%s: Cannot open %s\n", argv[0], argv[1]);
+		fprintf(stderr, "%s: Cannot open \"%s\"\n", argv[0], argv[1]);
 		exit(1);
 	}
 
@@ -45,23 +45,36 @@ int main(int argc, char **argv) {
 	cmd[++i] = '\0';
 
 	int j = 0;
+	int k = 0;
+	int sp = 0;
+	printf(".intel_syntax noprefix\n");
+	printf(".global main\n");
+	printf("main:\n");
+	printf("	push rbp\n");
+	printf("	mov rbp, rsp\n");
+	printf("	mov rax, 1\n");
+	printf("	mov rdi, 1\n");
+	printf("	mov rdx, 1\n");
 	while(cmd[j] != '\0')
 	{
 		switch(cmd[j]){
 		case '>':
-			printf(">");
+			printf("	sub rsp, 0x%x\n", 1);
+			sp--;
 			break;
 		case '<':
-			printf("<");
+			printf("	add rsp, 0x%x\n", 1);
+			sp++;
 			break;
 		case '+':
-			printf("+");
+			printf("	add DWORD PTR [rsp], 0x1\n");
 			break;
 		case '-':
-			printf("-");
+			printf("	sub DWORD PTR [rsp], 0x1\n");
 			break;
 		case '.':
-			printf(".");
+			printf("	mov rsi, rsp\n");
+			printf("	syscall\n");
 			break;
 		case ',':
 			printf(",");
@@ -78,8 +91,16 @@ int main(int argc, char **argv) {
 		j++;
 	}
 
-
-
+	if(sp == 0);
+	else if(sp > 0) {
+		printf("	sub rsp, 0x%x\n", sp*4);
+	}else if(sp < 0) {
+		printf("	add rsp, 0x%x\n", -sp*4);
+	}
+	printf("	mov rax, 0\n");
+	printf("	mov rsp, rbp\n");
+	printf("	pop rbp\n");
+	printf("	ret\n");
 	free(cmd);
 	return 0;
 }
