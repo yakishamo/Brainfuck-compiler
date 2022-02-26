@@ -47,6 +47,8 @@ int main(int argc, char **argv) {
 	int j = 0;
 	int k = 0;
 	int sp = 0;
+	int loop[100];
+	int loop_num = 0;
 	printf(".intel_syntax noprefix\n");
 	printf(".global main\n");
 	printf("main:\n");
@@ -77,6 +79,7 @@ int main(int argc, char **argv) {
 			printf("	syscall\n");
 			break;
 		case ',':
+
 			printf(",");
 			break;
 		case '[':
