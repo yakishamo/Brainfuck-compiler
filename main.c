@@ -52,35 +52,41 @@ int main(int argc, char **argv) {
 	printf(".intel_syntax noprefix\n");
 	printf(".global main\n");
 	printf("main:\n");
-	printf("	push rbp\n");
-	printf("	mov rbp, rsp\n");
-	printf("	mov rax, 1\n");
-	printf("	mov rdi, 1\n");
-	printf("	mov rdx, 1\n");
+	printf("\tpush rbp\n");
+	printf("\tmov rbp, rsp\n");
+	printf("\tmov rax, 1\n");
+	printf("\tmov rdi, 1\n");
+	printf("\tmov rdx, 1\n");
 	while(cmd[j] != '\0')
 	{
 		switch(cmd[j]){
 		case '>':
-			printf("	sub rsp, 0x%x\n", 1);
+			printf("\tsub rsp, 0x%x\n", 1);
 			sp--;
 			break;
 		case '<':
-			printf("	add rsp, 0x%x\n", 1);
+			printf("\tadd rsp, 0x%x\n", 1);
 			sp++;
 			break;
 		case '+':
-			printf("	add DWORD PTR [rsp], 0x1\n");
+			printf("\tadd DWORD PTR [rsp], 0x1\n");
 			break;
 		case '-':
-			printf("	sub DWORD PTR [rsp], 0x1\n");
+			printf("\tsub DWORD PTR [rsp], 0x1\n");
 			break;
 		case '.':
-			printf("	mov rsi, rsp\n");
-			printf("	syscall\n");
+			printf("\tmov rax, 1\n");
+			printf("\tmov rdi, 1\n");
+			printf("\tmov rdx, 1\n");
+			printf("\tmov rsi, rsp\n");
+			printf("\tsyscall\n");
 			break;
 		case ',':
-
-			printf(",");
+			printf("\tmov rax, 0\n");
+			printf("\tmov rdi, 0\n");
+			printf("\tmov rsi, rsp\n");
+			printf("\tmov rdx, 1\n");
+			printf("\tsyscall\n");
 			break;
 		case '[':
 			printf("[");
