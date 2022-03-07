@@ -49,42 +49,42 @@ int main(int argc, char **argv) {
 	int sp = 0;
 	int loop[100];
 	int loop_num = 0;
-	printf(".intel_syntax noprefix\n");
-	printf(".global main\n");
+//	printf(".intel_syntax noprefix\n");
+//	printf(".global main\n");
 	printf("main:\n");
 	printf("\tpush rbp\n");
 	printf("\tmov rbp, rsp\n");
-	printf("\tmov rax, 1\n");
-	printf("\tmov rdi, 1\n");
-	printf("\tmov rdx, 1\n");
+
 	while(cmd[j] != '\0')
 	{
 		switch(cmd[j]){
 		case '>':
-			printf("\tsub rsp, 0x%x\n", 1);
 			sp--;
 			break;
 		case '<':
-			printf("\tadd rsp, 0x%x\n", 1);
 			sp++;
 			break;
 		case '+':
-			printf("\tadd DWORD PTR [rsp], 0x1\n");
+			if(sp != 0)	printf("\tadd DWORD [rbp %d], 0x1\n",sp);
+			else 		printf("\tadd DWORD rbp, 0x1\n");
 			break;
 		case '-':
-			printf("\tsub DWORD PTR [rsp], 0x1\n");
+			if(sp != 0)	printf("\tsub DWORD [rbp %d], 0x1\n",sp);
+			else 		printf("\tsub DWORD rbp, 0x1\n");;
 			break;
 		case '.':
 			printf("\tmov rax, 1\n");
 			printf("\tmov rdi, 1\n");
 			printf("\tmov rdx, 1\n");
-			printf("\tmov rsi, rsp\n");
+			if(sp == 0)	printf("\tmov rsi, rsp\n");
+			else printf("\tmov rsi, [rsp%d]\n", sp);
 			printf("\tsyscall\n");
 			break;
 		case ',':
 			printf("\tmov rax, 0\n");
 			printf("\tmov rdi, 0\n");
-			printf("\tmov rsi, rsp\n");
+			if(sp == 0)	printf("\tmov rsi, rsp\n");
+			else printf("\tmov rsi, [rsp%d]", sp);
 			printf("\tmov rdx, 1\n");
 			printf("\tsyscall\n");
 			break;
