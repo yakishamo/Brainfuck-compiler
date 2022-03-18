@@ -47,13 +47,15 @@ int main(int argc, char **argv) {
 	int j = 0;
 	int k = 0;
 	int sp = 0;
-	int loop[100];
-	int loop_num = 0;
-//	printf(".intel_syntax noprefix\n");
-//	printf(".global main\n");
-	printf("main:\n");
+	int loop_num[10000];
+	int loop_num_size;
+	int loop_counter = 0;
+	loop_num[0] = 0;
+	printf("global _start\n");
+	printf("_start:\n");
 	printf("\tpush rbp\n");
 	printf("\tmov rbp, rsp\n");
+	printf("\tsub rsp, 30000\n");
 
 	while(cmd[j] != '\0')
 	{
@@ -66,33 +68,42 @@ int main(int argc, char **argv) {
 			break;
 		case '+':
 			if(sp != 0)	printf("\tadd DWORD [rbp %d], 0x1\n",sp);
-			else 		printf("\tadd DWORD rbp, 0x1\n");
+			else 		printf("\tadd DWORD [rbp], 0x1\n");
 			break;
 		case '-':
 			if(sp != 0)	printf("\tsub DWORD [rbp %d], 0x1\n",sp);
-			else 		printf("\tsub DWORD rbp, 0x1\n");;
+			else 		printf("\tsub DWORD [rbp], 0x1\n");;
 			break;
 		case '.':
 			printf("\tmov rax, 1\n");
 			printf("\tmov rdi, 1\n");
 			printf("\tmov rdx, 1\n");
-			if(sp == 0)	printf("\tmov rsi, rsp\n");
-			else printf("\tmov rsi, [rsp%d]\n", sp);
+			printf("\tmov rsi, rbp\n");
+			printf("\tsub rsi, %d\n",-sp);
 			printf("\tsyscall\n");
 			break;
 		case ',':
 			printf("\tmov rax, 0\n");
 			printf("\tmov rdi, 0\n");
-			if(sp == 0)	printf("\tmov rsi, rsp\n");
-			else printf("\tmov rsi, [rsp%d]", sp);
+			printf("\tmov rsi, rbp\n");
+			printf("\tsub rsi, %d\n", -sp);
 			printf("\tmov rdx, 1\n");
 			printf("\tsyscall\n");
 			break;
 		case '[':
-			printf("[");
+			loop_counter++;
+			loop_num[loop_counter]++;
+			if(sp == 0)	printf("\tcmp DWORD [rbp], 0\n");
+			else 		printf("\tcmp DWORD [rbp -%d], 0\n", -sp);
+			printf("\tjz loop_%d_%d_end\n",loop_counter, loop_num[loop_counter]);
+			printf("loop_%d_%d_start:\n",loop_counter, loop_num[loop_counter]);
 			break;
 		case ']':
-			printf("]");
+			printf("loop_%d_%d_end:\n",loop_counter, loop_num[loop_counter]);
+			if(sp == 0)	printf("\tcmp DWORD [rbp], 0\n");
+			else		printf("\tcmp DWORD [rbp -%d], 0\n", -sp);
+			printf("\tjnz loop_%d_%d_start\n",loop_counter, loop_num[loop_counter]);
+			loop_counter--;
 			break;
 		default :
 			break;
@@ -100,16 +111,12 @@ int main(int argc, char **argv) {
 		j++;
 	}
 
-	if(sp == 0);
-	else if(sp > 0) {
-		printf("	sub rsp, 0x%x\n", sp*4);
-	}else if(sp < 0) {
-		printf("	add rsp, 0x%x\n", -sp*4);
-	}
-	printf("	mov rax, 0\n");
-	printf("	mov rsp, rbp\n");
-	printf("	pop rbp\n");
-	printf("	ret\n");
+	printf("\tmov rax, 0\n");
+	printf("\tmov rsp, rbp\n");
+	printf("\tpop rbp\n");
+	printf("\tmov rax, 60\n");
+	printf("\tmov rdi, 0\n");
+	printf("\tsyscall\n");
 	free(cmd);
 	return 0;
 }
