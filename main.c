@@ -61,10 +61,10 @@ int main(int argc, char **argv) {
 	{
 		switch(cmd[j]){
 		case '>':
-			sp--;
+			sp-=4;
 			break;
 		case '<':
-			sp++;
+			sp+=4;
 			break;
 		case '+':
 			if(sp != 0)	printf("\tadd DWORD [rbp %d], 0x1\n",sp);
@@ -93,10 +93,10 @@ int main(int argc, char **argv) {
 		case '[':
 			loop_counter++;
 			loop_num[loop_counter]++;
+			printf("loop_%d_%d_start:\n", loop_counter, loop_num[loop_counter]);
 			if(sp == 0)	printf("\tcmp DWORD [rbp], 0\n");
 			else 		printf("\tcmp DWORD [rbp -%d], 0\n", -sp);
 			printf("\tjz loop_%d_%d_end\n",loop_counter, loop_num[loop_counter]);
-			printf("loop_%d_%d_start:\n",loop_counter, loop_num[loop_counter]);
 			break;
 		case ']':
 			printf("loop_%d_%d_end:\n",loop_counter, loop_num[loop_counter]);
